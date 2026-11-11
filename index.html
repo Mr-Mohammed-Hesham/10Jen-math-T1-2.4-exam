@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🔬 Scientific Notation - رياضيات 10 عام | Mr. Mohammed Hesham</title>
+<meta name="description" content="امتحان تفاعلي عن الترميز العلمي: التحويل والعمليات - رياضيات صف 10 عام">
+<meta name="author" content="Mr. Mohammed Hesham">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Inter:wght@400;600;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+<style>
+body { font-family: 'Cairo', sans-serif; background: linear-gradient(135deg, #ffedd5 0%, #fed7aa 100%); }
+body.en-mode { font-family: 'Inter', sans-serif; direction: ltr; }
+.arabic-math { font-family: 'Amiri', 'Cairo', serif; }
+.correct { background-color: #dcfce7 !important; border-color: #16a34a !important; }
+.incorrect { background-color: #fee2e2 !important; border-color: #dc2626 !important; }
+.timer-warning { color: #dc2626 !important; animation: pulse 1s infinite; }
+@keyframes pulse { 50% { opacity: 0.7; } }
+@media print { .no-print { display: none !important; } }
+.success-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-weight: bold; font-size: 0.875rem; }
+.grade-excellent { background: #dcfce7; color: #166534; }
+.grade-good { background: #fef3c7; color: #92400e; }
+.grade-pass { background: #dbeafe; color: #1e40af; }
+.grade-fail { background: #fee2e2; color: #991b1b; }
+.lang-switch { position: fixed; top: 16px; left: 16px; z-index: 100; background: white; padding: 6px; border-radius: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.15); display: flex; gap: 4px; border: 2px solid #ea580c; }
+body.en-mode .lang-switch { left: auto; right: 16px; }
+.lang-btn { padding: 6px 14px; border-radius: 20px; cursor: pointer; font-weight: bold; transition: 0.3s; border: none; font-size: 0.875rem; background: transparent; color: #6b7280; }
+.lang-btn.active { background: #ea580c; color: white; }
+.shuffle-badge { display: inline-block; background: linear-gradient(135deg, #ea580c, #c2410c); color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; margin-right: 8px; }
+body.en-mode .shuffle-badge { margin-right: 0; margin-left: 8px; }
+.math-display { display: inline-block; direction: ltr; font-family: 'Amiri', serif; font-size: 1.15em; padding: 2px 8px; background: #ffedd5; border-radius: 4px; margin: 2px; color: #9a3412; font-weight: 700; }
+.save-indicator { position: fixed; bottom: 20px; left: 20px; z-index: 200; background: #10b981; color: white; padding: 8px 16px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+body.en-mode .save-indicator { left: auto; right: 20px; }
+.save-indicator.show { opacity: 1; }
+.formula-box { background: #ffedd5; border: 2px solid #ea580c; border-radius: 8px; padding: 12px; margin: 10px 0; font-family: 'Amiri', serif; direction: ltr; text-align: center; }
+.svg-graph { display: block; margin: 12px auto; background: white; border: 2px solid #e5e7eb; border-radius: 12px; padding: 8px; max-width: 100%; }
+.graph-container { text-align: center; margin: 10px 0; }
+.module-badge { display: inline-block; padding: 4px 16px; border-radius: 20px; font-weight: bold; font-size: 0.85rem; margin-bottom: 8px; }
+.module-1 { background: #ffedd5; color: #9a3412; }
+.module-2 { background: #dbeafe; color: #1e40af; }
+.module-3 { background: #fce7f3; color: #9f1239; }
+.module-4 { background: #ecfdf5; color: #065f46; }
+.module-5 { background: #ede9fe; color: #5b21b6; }
+.module-6 { background: #fee2e2; color: #991b1b; }
+</style>
+</head>
+<body class="p-4 md:p-8 min-h-screen">
+
+<div class="lang-switch no-print">
+<button class="lang-btn active" onclick="setLanguage('ar')" id="btn-ar">عربي</button>
+<button class="lang-btn" onclick="setLanguage('en')" id="btn-en">EN</button>
+</div>
+
+<div id="saveIndicator" class="save-indicator">💾 <span data-ar="تم الحفظ" data-en="Saved">تم الحفظ</span></div>
+
+<div id="timer-container" class="max-w-5xl mx-auto mb-4 text-center no-print">
+<div class="bg-white p-4 rounded-2xl shadow-lg inline-block border-2 border-orange-100">
+<span class="text-gray-600 ml-2">⏰ <span data-ar="الوقت المتبقي:" data-en="Time Left:">الوقت المتبقي:</span></span>
+<span id="timer" class="text-2xl font-bold text-orange-700 font-mono">45:00</span>
+<span class="shuffle-badge">🔬 <span data-ar="الترميز العلمي" data-en="Scientific Notation">الترميز العلمي</span> - 30 <span data-ar="سؤال" data-en="Questions">سؤال</span></span>
+</div>
+</div>
+
+<div class="max-w-5xl mx-auto mb-6 flex flex-wrap gap-3 justify-center no-print">
+<button onclick="toggleAnswers()" class="bg-orange-700 hover:bg-orange-800 text-white px-5 py-2 rounded-xl font-medium transition shadow">👀 <span data-ar="إظهار/إخفاء الإجابات" data-en="Show/Hide Answers">إظهار/إخفاء الإجابات</span></button>
+<button onclick="window.print()" class="bg-gray-700 hover:bg-gray-900 text-white px-5 py-2 rounded-xl font-medium transition shadow">🖨️ <span data-ar="طباعة" data-en="Print">طباعة</span></button>
+<button onclick="reshuffleExam()" class="bg-gradient-to-r from-orange-700 to-amber-600 hover:from-orange-800 hover:to-amber-700 text-white px-5 py-2 rounded-xl font-medium transition shadow">🔄 <span data-ar="أسئلة جديدة" data-en="New Questions">أسئلة جديدة</span></button>
+<button onclick="clearProgress()" class="bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-xl font-medium transition shadow">🗑️ <span data-ar="مسح التقدم" data-en="Clear Progress">مسح التقدم</span></button>
+</div>
+
+<header class="max-w-5xl mx-auto bg-white p-8 rounded-3xl shadow-2xl mb-8 border-4 border-orange-500">
+<div class="text-center">
+<div class="inline-block bg-orange-700 text-white px-6 py-2 rounded-full text-sm font-bold mb-4">MATH GRADE 10 GENERAL</div>
+<h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">🔬 <span data-ar="الترميز العلمي: التحويل والعمليات" data-en="Scientific Notation: Conversions & Operations">الترميز العلمي: التحويل والعمليات</span></h1>
+<h2 class="text-xl text-orange-700 font-semibold mb-2"><span data-ar="رياضيات صف 10 عام - التمارين (1-4، 7-18، 22-33)" data-en="Grade 10 General - Exercises (1-4, 7-18, 22-33)">رياضيات صف 10 عام - التمارين (1-4، 7-18، 22-33)</span></h2>
+<p class="text-gray-600 mb-4"><span data-ar="العدد المكتوب بالترميز العلمي: a × 10ⁿ حيث 1 ≤ a &lt; 10 و n عدد صحيح" data-en="Scientific notation: a × 10ⁿ where 1 ≤ a &lt; 10 and n is an integer">العدد المكتوب بالترميز العلمي: a × 10ⁿ حيث 1 ≤ a &lt; 10 و n عدد صحيح</span></p>
+<p class="text-sm text-green-600 font-semibold">💾 <span data-ar="يتم حفظ تقدمك تلقائياً - 30 سؤالاً في 6 أقسام" data-en="Auto-saved - 30 questions in 6 sections">يتم حفظ تقدمك تلقائياً - 30 سؤالاً في 6 أقسام</span></p>
+</div>
+<div class="mt-6 flex flex-wrap justify-center gap-4 text-sm text-gray-600">
+<span>📅 <span data-ar="التاريخ:" data-en="Date:">التاريخ:</span> <input type="text" id="examDate" class="border-b-2 border-orange-300 bg-transparent w-32 text-center"></span>
+<span>😊 <span data-ar="الاسم:" data-en="Name:">الاسم:</span> <input type="text" id="studentName" class="border-b-2 border-orange-300 bg-transparent w-40 text-center" data-placeholder-ar="اكتب اسمك" data-placeholder-en="Your name" placeholder="اكتب اسمك"></span>
+<span>🏫 <span data-ar="الشعبة:" data-en="Class:">الشعبة:</span> <input type="text" id="studentClass" class="border-b-2 border-orange-300 bg-transparent w-32 text-center" data-placeholder-ar="الشعبة" data-placeholder-en="Class" placeholder="الشعبة"></span>
+<span>⏰ <span data-ar="المدة: 45 دقيقة" data-en="Duration: 45 min">المدة: 45 دقيقة</span></span>
+<span>📊 <span data-ar="المجموع: 100 درجة" data-en="Total: 100 points">المجموع: 100 درجة</span></span>
+</div>
+</header>
+
+<div class="max-w-5xl mx-auto mb-6 bg-white p-4 rounded-xl shadow-lg border-2 border-orange-200 no-print">
+<h3 class="font-bold text-lg mb-3 text-orange-800 text-center">🔬 <span data-ar="قواعد الترميز العلمي" data-en="Scientific Notation Rules">قواعد الترميز العلمي</span></h3>
+<div class="grid md:grid-cols-4 gap-3 text-sm">
+<div class="formula-box"><strong><span data-ar="الصيغة:" data-en="Form:">الصيغة:</span></strong><br><span class="math-display">a × 10ⁿ</span><br><span data-ar="حيث 1 ≤ a &lt; 10" data-en="where 1 ≤ a &lt; 10">حيث 1 ≤ a &lt; 10</span></div>
+<div class="formula-box"><strong><span data-ar="الضرب:" data-en="Multiply:">الضرب:</span></strong><br><span data-ar="اضرب المعاملات واجمع الأسس" data-en="Multiply coeffs, add exponents">اضرب المعاملات واجمع الأسس</span></div>
+<div class="formula-box"><strong><span data-ar="القسمة:" data-en="Divide:">القسمة:</span></strong><br><span data-ar="اقسم المعاملات واطرح الأسس" data-en="Divide coeffs, subtract exponents">اقسم المعاملات واطرح الأسس</span></div>
+<div class="formula-box"><strong><span data-ar="القوة:" data-en="Power:">القوة:</span></strong><br><span data-ar="ربّع المعامل واضرب الأس" data-en="Power the coeff, multiply exponent">ربّع المعامل واضرب الأس</span></div>
+</div>
+<div id="method-holder" class="mt-2"></div>
+</div>
+
+<main class="max-w-5xl mx-auto space-y-8" id="exam-content"></main>
+
+<div class="text-center no-print pb-8 mt-8">
+<button onclick="gradeExam()" class="bg-gradient-to-r from-orange-700 to-amber-600 hover:from-orange-800 hover:to-amber-700 text-white text-lg px-12 py-4 rounded-2xl font-bold shadow-xl transition transform hover:scale-105">🎯 <span data-ar="صحح إجاباتي!" data-en="Grade My Exam!">صحح إجاباتي!</span></button>
+</div>
+
+<div id="results-panel" class="max-w-5xl mx-auto mt-8 bg-white p-8 rounded-3xl shadow-2xl border-4 border-orange-500 hidden no-print">
+<h2 class="text-3xl font-bold text-gray-900 mb-6 text-center">🏆 <span data-ar="نتيجتك يا بطل!" data-en="Your Result, Champion!">نتيجتك يا بطل!</span> 🏆</h2>
+<div class="grid md:grid-cols-3 gap-4 mb-6">
+<div class="bg-orange-50 p-4 rounded-xl text-center"><p>😊 <span data-ar="الاسم" data-en="Name">الاسم</span></p><p id="res-name" class="font-bold text-xl text-orange-700">-</p></div>
+<div class="bg-amber-50 p-4 rounded-xl text-center"><p>📅 <span data-ar="التاريخ" data-en="Date">التاريخ</span></p><p id="res-date" class="font-bold text-xl text-amber-700">-</p></div>
+<div class="bg-orange-50 p-4 rounded-xl text-center"><p>🌟 <span data-ar="المجموع" data-en="Total">المجموع</span></p><p id="res-total" class="font-bold text-3xl text-orange-700">0 / 100</p></div>
+</div>
+<div class="text-center mb-6">
+<span id="success-badge" class="success-badge grade-excellent">-</span>
+<p id="success-percent" class="text-4xl font-bold text-orange-700 mt-2">0%</p>
+<p class="text-sm text-gray-500"><span data-ar="نسبة النجاح" data-en="Success Rate">نسبة النجاح</span></p>
+</div>
+<div class="bg-gray-50 p-6 rounded-xl mb-6">
+<h3 class="font-bold text-lg mb-4 text-gray-800">📊 <span data-ar="أداؤك في كل قسم:" data-en="Your Performance by Section:">أداؤك في كل قسم:</span></h3>
+<div class="space-y-3" id="sections-performance"></div>
+</div>
+<div class="text-center">
+<button id="sendEmailBtn" onclick="sendResultsToEmail()" class="bg-gradient-to-r from-orange-700 to-amber-600 text-white text-lg px-8 py-3 rounded-2xl font-bold shadow-xl transition">📧 <span data-ar="أرسل النتيجة للمعلم" data-en="Send Result to Teacher">أرسل النتيجة للمعلم</span></button>
+<p id="emailStatus" class="text-sm mt-2 text-center font-medium"></p>
+</div>
+</div>
+
+<footer class="max-w-5xl mx-auto mt-10 mb-8 text-center text-gray-500 text-sm no-print">
+© Scientific Notation - Grade 10 General | Mr. Mohammed Hesham 🔬
+</footer>
+
+<script>
+const PUBLIC_KEY = "Rb3Lq8tXaFmc5YHUH";
+const SERVICE_ID = "service_w15m64i";
+const TEMPLATE_ID = "template_5b0u2tq";
+const TARGET_EMAIL = "mohammedhesham872@gmail.com";
+emailjs.init(PUBLIC_KEY);
+
+const STORAGE_KEY = 'scientific_notation_grade10_v1';
+const TOTAL_TIME = 2700;
+const TOTAL_QUESTIONS = 30;
+const TOTAL_SECTIONS = 6;
+const QUESTIONS_PER_SECTION = 5;
+
+let currentSeed = null, answersVisible = false, saveIndicatorTimeout = null;
+let currentLang = 'ar', timeRemaining = TOTAL_TIME, timerInterval;
+let examData, correctAnswersMap = {}, rng = null;
+
+function mulberry32(a){return function(){var t=a+=0x6D2B79F5;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return((t^t>>>14)>>>0)/4294967296}}
+function showSaveIndicator(){const i=document.getElementById('saveIndicator');i.classList.add('show');if(saveIndicatorTimeout)clearTimeout(saveIndicatorTimeout);saveIndicatorTimeout=setTimeout(()=>i.classList.remove('show'),1500)}
+function saveState(s=true){try{localStorage.setItem(STORAGE_KEY,JSON.stringify({seed:currentSeed,lang:currentLang,studentName:document.getElementById('studentName').value,studentClass:document.getElementById('studentClass').value,examDate:document.getElementById('examDate').value,answers:getSelectedAnswers(),timeRemaining:timeRemaining,answersVisible:answersVisible,savedAt:Date.now()}));if(s)showSaveIndicator()}catch(e){console.error(e)}}
+function loadState(){try{const s=localStorage.getItem(STORAGE_KEY);return s?JSON.parse(s):null}catch(e){return null}}
+function getSelectedAnswers(){const a={};for(let i=0;i<TOTAL_QUESTIONS;i++){const s=document.querySelector('input[name="q'+i+'"]:checked');if(s)a[i]=s.value}return a}
+function restoreAnswers(a){if(!a)return;for(const[i,v]of Object.entries(a)){const r=document.querySelector('input[name="q'+i+'"][value="'+v+'"]');if(r)r.checked=true}}
+function clearProgress(){if(confirm(currentLang==='ar'?'⚠️ هل أنت متأكد من مسح كل التقدم؟':'⚠️ Clear all progress?')){localStorage.removeItem(STORAGE_KEY);location.reload()}}
+function setupAnswerListeners(){document.getElementById('exam-content').addEventListener('change',e=>{if(e.target.type==='radio')saveState()})}
+function setupInputListeners(){['studentName','studentClass','examDate'].forEach(id=>{const el=document.getElementById(id);if(el){el.addEventListener('input',()=>saveState(false));el.addEventListener('blur',()=>saveState())}})}
+
+// ==================== SVG DIAGRAMS ====================
+const svgGraphs = {
+fig_definition: `<svg class="svg-graph" width="500" height="250" viewBox="0 0 500 250" xmlns="http://www.w3.org/2000/svg">
+<rect x="5" y="5" width="490" height="240" rx="12" fill="#ffedd5" stroke="#ea580c" stroke-width="2"/>
+<text x="250" y="28" text-anchor="middle" font-size="14" fill="#9a3412" font-weight="bold">🔬 صيغة الترميز العلمي</text>
+<rect x="140" y="45" width="220" height="60" rx="10" fill="#fed7aa" stroke="#ea580c" stroke-width="2.5"/>
+<text x="250" y="84" text-anchor="middle" font-size="26" fill="#9a3412" font-family="'Amiri',serif" font-weight="bold">a × 10ⁿ</text>
+<line x1="180" y1="105" x2="140" y2="140" stroke="#16a34a" stroke-width="2"/>
+<line x1="320" y1="105" x2="360" y2="140" stroke="#dc2626" stroke-width="2"/>
+<rect x="40" y="140" width="200" height="60" rx="8" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+<text x="140" y="163" text-anchor="middle" font-size="12" fill="#166534" font-weight="bold">شرط المعامل a:</text>
+<text x="140" y="186" text-anchor="middle" font-size="14" fill="#166534" font-family="'Amiri',serif" font-weight="bold">1 ≤ a &lt; 10</text>
+<rect x="260" y="140" width="200" height="60" rx="8" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
+<text x="360" y="163" text-anchor="middle" font-size="12" fill="#991b1b" font-weight="bold">شرط الأس n:</text>
+<text x="360" y="186" text-anchor="middle" font-size="13" fill="#991b1b">عدد صحيح (موجب أو سالب)</text>
+<rect x="40" y="210" width="420" height="26" rx="6" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+<text x="250" y="228" text-anchor="middle" font-size="10.5" fill="#92400e" font-weight="bold">أمثلة صحيحة: 1.85×10⁸ ، 5.64×10⁻⁴ | خاطئة: 18.5×10⁷ ، 0.185×10⁹</text>
+</svg>`,
+
+fig_to_sci_big: `<svg class="svg-graph" width="500" height="230" viewBox="0 0 500 230" xmlns="http://www.w3.org/2000/svg">
+<rect x="5" y="5" width="490" height="220" rx="12" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="250" y="28" text-anchor="middle" font-size="13" fill="#1e40af" font-weight="bold">عدد كبير: حرّك الفاصلة يساراً ⇒ أس موجب (تمرين 1)</text>
+<text x="250" y="70" text-anchor="middle" font-size="22" fill="#1e3a8a" font-family="'Amiri',serif" font-weight="bold">185,000,000.</text>
+<path d="M 320 80 C 300 105 200 105 178 82" fill="none" stroke="#dc2626" stroke-width="2.5" marker-end="url(#sA)"/>
+<text x="250" y="105" text-anchor="middle" font-size="11" fill="#dc2626" font-weight="bold">8 خانات لليسار</text>
+<text x="250" y="140" text-anchor="middle" font-size="22" fill="#166534" font-family="'Amiri',serif" font-weight="bold">1.85 × 10⁸</text>
+<rect x="60" y="160" width="380" height="52" rx="8" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+<text x="250" y="180" text-anchor="middle" font-size="10.5" fill="#92400e" font-weight="bold">عدد الخانات المنقولة = قيمة الأس n</text>
+<text x="250" y="200" text-anchor="middle" font-size="10.5" fill="#92400e" font-family="'Amiri',serif">1,902,500,000 → 9 خانات → 1.9025 × 10⁹</text>
+<defs><marker id="sA" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0,0 L0,8 L8,4 z" fill="#dc2626"/></marker></defs>
+</svg>`,
+
+fig_to_sci_small: `<svg class="svg-graph" width="500" height="230" viewBox="0 0 500 230" xmlns="http://www.w3.org/2000/svg">
+<rect x="5" y="5" width="490" height="220" rx="12" fill="#fce7f3" stroke="#ec4899" stroke-width="2"/>
+<text x="250" y="28" text-anchor="middle" font-size="13" fill="#9f1239" font-weight="bold">عدد صغير: حرّك الفاصلة يميناً ⇒ أس سالب (تمرين 3)</text>
+<text x="250" y="70" text-anchor="middle" font-size="22" fill="#831843" font-family="'Amiri',serif" font-weight="bold">0.000564</text>
+<path d="M 190 80 C 210 105 300 105 322 82" fill="none" stroke="#dc2626" stroke-width="2.5" marker-end="url(#sB)"/>
+<text x="250" y="105" text-anchor="middle" font-size="11" fill="#dc2626" font-weight="bold">4 خانات لليمين</text>
+<text x="250" y="140" text-anchor="middle" font-size="22" fill="#166534" font-family="'Amiri',serif" font-weight="bold">5.64 × 10⁻⁴</text>
+<rect x="60" y="160" width="380" height="52" rx="8" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+<text x="250" y="180" text-anchor="middle" font-size="10.5" fill="#92400e" font-weight="bold">اتجاه الحركة يحدد إشارة الأس</text>
+<text x="250" y="200" text-anchor="middle" font-size="10.5" fill="#92400e" font-family="'Amiri',serif">0.00000804 → 6 خانات يميناً → 8.04 × 10⁻⁶</text>
+<defs><marker id="sB" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0,0 L0,8 L8,4 z" fill="#dc2626"/></marker></defs>
+</svg>`,
+
+fig_to_std: `<svg class="svg-graph" width="500" height="240" viewBox="0 0 500 240" xmlns="http://www.w3.org/2000/svg">
+<rect x="5" y="5" width="490" height="230" rx="12" fill="#ecfdf5" stroke="#10b981" stroke-width="2"/>
+<text x="250" y="28" text-anchor="middle" font-size="13" fill="#065f46" font-weight="bold">من الترميز العلمي إلى الصيغة القياسية</text>
+<rect x="30" y="45" width="210" height="80" rx="8" fill="#d1fae5" stroke="#10b981" stroke-width="2"/>
+<text x="135" y="68" text-anchor="middle" font-size="12" fill="#065f46" font-weight="bold">أس موجب ⇒ حرّك يميناً</text>
+<text x="135" y="92" text-anchor="middle" font-size="13" fill="#065f46" font-family="'Amiri',serif" font-weight="bold">1.98 × 10⁷</text>
+<text x="135" y="114" text-anchor="middle" font-size="12" fill="#166534" font-family="'Amiri',serif" font-weight="bold">= 19,800,000</text>
+<rect x="260" y="45" width="210" height="80" rx="8" fill="#d1fae5" stroke="#10b981" stroke-width="2"/>
+<text x="365" y="68" text-anchor="middle" font-size="12" fill="#065f46" font-weight="bold">أس سالب ⇒ حرّك يساراً</text>
+<text x="365" y="92" text-anchor="middle" font-size="13" fill="#065f46" font-family="'Amiri',serif" font-weight="bold">6.8 × 10⁻⁵</text>
+<text x="365" y="114" text-anchor="middle" font-size="12" fill="#166534" font-family="'Amiri',serif" font-weight="bold">= 0.000068</text>
+<rect x="30" y="140" width="440" height="80" rx="8" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+<text x="250" y="162" text-anchor="middle" font-size="10.5" fill="#92400e" font-weight="bold">💡 عدّ الخانات: 10⁷ ⇒ 7 خانات يميناً (أضف أصفاراً عند الحاجة)</text>
+<text x="250" y="182" text-anchor="middle" font-size="10.5" fill="#92400e" font-family="'Amiri',serif">3.405 × 10⁻⁸ ⇒ 8 خانات يساراً ⇒ 0.00000003405</text>
+<text x="250" y="204" text-anchor="middle" font-size="10.5" fill="#92400e" font-family="'Amiri',serif">8.73 × 10¹¹ ⇒ 873,000,000,000</text>
+</svg>`,
+
+fig_mult: `<svg class="svg-graph" width="500" height="240" viewBox="0 0 500 240" xmlns="http://www.w3.org/2000/svg">
+<rect x="5" y="5" width="490" height="230" rx="12" fill="#ede9fe" stroke="#7c3aed" stroke-width="2"/>
+<text x="250" y="28" text-anchor="middle" font-size="13" fill="#5b21b6" font-weight="bold">✖️ الضرب: معاملات تُضرب وأسس تُجمع (تمرين 11)</text>
+<rect x="40" y="45" width="420" height="40" rx="8" fill="#ddd6fe" stroke="#7c3aed" stroke-width="2"/>
+<text x="250" y="71" text-anchor="middle" font-size="14" fill="#5b21b6" font-family="'Amiri',serif" font-weight="bold">(1.2 × 10³)(1.45 × 10¹²)</text>
+<path d="M 120 88 C 140 105 160 105 180 90" fill="none" stroke="#16a34a" stroke-width="2" marker-end="url(#sM)"/>
+<path d="M 300 88 C 320 105 340 105 360 90" fill="none" stroke="#dc2626" stroke-width="2" marker-end="url(#sM)"/>
+<text x="150" y="115" text-anchor="middle" font-size="10" fill="#166534" font-weight="bold">1.2 × 1.45</text>
+<text x="330" y="115" text-anchor="middle" font-size="10" fill="#991b1b" font-weight="bold">10³⁺¹²</text>
+<rect x="40" y="125" width="420" height="40" rx="8" fill="#ddd6fe" stroke="#7c3aed" stroke-width="2"/>
+<text x="250" y="151" text-anchor="middle" font-size="14" fill="#5b21b6" font-family="'Amiri',serif" font-weight="bold">= 1.74 × 10¹⁵</text>
+<rect x="40" y="175" width="420" height="46" rx="8" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+<text x="250" y="194" text-anchor="middle" font-size="10.5" fill="#92400e" font-weight="bold">الصيغة القياسية: 1,740,000,000,000,000</text>
+<text x="250" y="212" text-anchor="middle" font-size="10" fill="#92400e" font-family="'Amiri',serif">(7.08×10¹⁴)(5×10⁻⁹) = 35.4×10⁵ = 3.54×10⁶ (عدّل للصيغة!)</text>
+<defs><marker id="sM" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L0,8 L7,4 z" fill="#374151"/></marker></defs>
+</svg>`,
+
+fig_adjust: `<svg class="svg-graph" width="500" height="220" viewBox="0 0 500 220" xmlns="http://www.w3.org/2000/svg">
+<rect x="5" y="5" width="490" height="210" rx="12" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+<text x="250" y="28" text-anchor="middle" font-size="13" fill="#92400e" font-weight="bold">⚖️ تعديل الناتج إلى الصيغة العلمية الصحيحة</text>
+<rect x="40" y="45" width="190" height="50" rx="8" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
+<text x="135" y="68" text-anchor="middle" font-size="13" fill="#991b1b" font-family="'Amiri',serif" font-weight="bold">35.4 × 10⁵</text>
+<text x="135" y="86" text-anchor="middle" font-size="9" fill="#991b1b">a = 35.4 ليس بين 1 و 10 ✗</text>
+<path d="M 235 70 L 265 70" stroke="#16a34a" stroke-width="2.5" marker-end="url(#sJ)"/>
+<rect x="270" y="45" width="190" height="50" rx="8" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+<text x="365" y="68" text-anchor="middle" font-size="13" fill="#166534" font-family="'Amiri',serif" font-weight="bold">3.54 × 10⁶</text>
+<text x="365" y="86" text-anchor="middle" font-size="9" fill="#166534">صغّرنا a بمقدار 10 ⇒ زدنا الأس 1</text>
+<rect x="40" y="105" width="190" height="50" rx="8" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
+<text x="135" y="128" text-anchor="middle" font-size="13" fill="#991b1b" font-family="'Amiri',serif" font-weight="bold">0.45 × 10⁴</text>
+<text x="135" y="146" text-anchor="middle" font-size="9" fill="#991b1b">a = 0.45 أقل من 1 ✗</text>
+<path d="M 235 130 L 265 130" stroke="#16a34a" stroke-width="2.5" marker-end="url(#sJ)"/>
+<rect x="270" y="105" width="190" height="50" rx="8" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+<text x="365" y="128" text-anchor="middle" font-size="13" fill="#166534" font-family="'Amiri',serif" font-weight="bold">4.5 × 10³</text>
+<text x="365" y="146" text-anchor="middle" font-size="9" fill="#166534">كبّرنا a بمقدار 10 ⇒ أنقصنا الأس 1</text>
+<rect x="40" y="168" width="420" height="34" rx="6" fill="#ffedd5" stroke="#ea580c" stroke-width="2"/>
+<text x="250" y="190" text-anchor="middle" font-size="10.5" fill="#9a3412" font-weight="bold">القاعدة: حرّك الفاصلة في a وعاكس الحركة في الأس n</text>
+<defs><marker id="sJ" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0,0 L0,8 L8,4 z" fill="#16a34a"/></marker></defs>
+</svg>`,
+
+fig_div: `<svg class="svg-graph" width="500" height="240" viewBox="0 0 500 240" xmlns="http://www.w3.org/2000/svg">
+<rect x="5" y="5" width="490" height="230" rx="12" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
+<text x="250" y="28" text-anchor="middle" font-size="13" fill="#991b1b" font-weight="bold">➗ القسمة: معاملات تُقسم وأسس تُطرح (تمرين 15)</text>
+<rect x="40" y="42" width="420" height="52" rx="8" fill="#fecaca" stroke="#dc2626" stroke-width="2"/>
+<text x="250" y="66" text-anchor="middle" font-size="14" fill="#991b1b" font-family="'Amiri',serif" font-weight="bold">(1.035 × 10⁸) ÷ (2.3 × 10⁴)</text>
+<text x="250" y="86" text-anchor="middle" font-size="10" fill="#991b1b">اقسم المعاملين: 1.035/2.3 = 0.45 | اطرح الأسين: 8 - 4 = 4</text>
+<rect x="40" y="104" width="420" height="40" rx="8" fill="#fecaca" stroke="#dc2626" stroke-width="2"/>
+<text x="250" y="130" text-anchor="middle" font-size="14" fill="#991b1b" font-family="'Amiri',serif" font-weight="bold">= 0.45 × 10⁴  (ليست صيغة علمية!)</text>
+<path d="M 250 146 L 250 160" stroke="#16a34a" stroke-width="2.5" marker-end="url(#sD)"/>
+<rect x="40" y="162" width="420" height="40" rx="8" fill="#dcfce7" stroke="#16a34a" stroke-width="2.5"/>
+<text x="250" y="188" text-anchor="middle" font-size="15" fill="#166534" font-family="'Amiri',serif" font-weight="bold">= 4.5 × 10³ = 4500</text>
+<rect x="40" y="208" width="420" height="0" rx="0" fill="none"/>
+<text x="250" y="222" text-anchor="middle" font-size="9.5" fill="#991b1b" font-weight="bold">⚠️ لا تنسَ خطوة التعديل بعد القسمة!</text>
+<defs><marker id="sD" markerWidth="8" markerHeight="8" refX="4" refY="7" orient="auto"><path d="M0,0 L8,0 L4,7 z" fill="#16a34a"/></marker></defs>
+</svg>`,
+
+fig_power: `<svg class="svg-graph" width="500" height="230" viewBox="0 0 500 230" xmlns="http://www.w3.org/2000/svg">
+<rect x="5" y="5" width="490" height="220" rx="12" fill="#fce7f3" stroke="#ec4899" stroke-width="2"/>
+<text x="250" y="28" text-anchor="middle" font-size="13" fill="#9f1239" font-weight="bold">⬆️ القوة: (a × 10ⁿ)ᵏ = aᵏ × 10ⁿᐧᵏ (تمرين 14)</text>
+<rect x="40" y="45" width="420" height="40" rx="8" fill="#fbcfe8" stroke="#ec4899" stroke-width="2"/>
+<text x="250" y="71" text-anchor="middle" font-size="14" fill="#9f1239" font-family="'Amiri',serif" font-weight="bold">(2.18 × 10⁻²)²</text>
+<line x1="160" y1="88" x2="140" y2="105" stroke="#ec4899" stroke-width="2"/>
+<line x1="340" y1="88" x2="360" y2="105" stroke="#ec4899" stroke-width="2"/>
+<rect x="60" y="105" width="160" height="44" rx="8" fill="#fbcfe8" stroke="#ec4899" stroke-width="2"/>
+<text x="140" y="125" text-anchor="middle" font-size="12" fill="#9f1239" font-family="'Amiri',serif" font-weight="bold">(2.18)² = 4.7524</text>
+<text x="140" y="142" text-anchor="middle" font-size="9" fill="#9f1239">ربّع المعامل</text>
+<rect x="280" y="105" width="160" height="44" rx="8" fill="#fbcfe8" stroke="#ec4899" stroke-width="2"/>
+<text x="360" y="125" text-anchor="middle" font-size="12" fill="#9f1239" font-family="'Amiri',serif" font-weight="bold">(10⁻²)² = 10⁻⁴</text>
+<text x="360" y="142" text-anchor="middle" font-size="9" fill="#9f1239">اضرب الأسّين: -2 × 2</text>
+<rect x="40" y="160" width="420" height="40" rx="8" fill="#dcfce7" stroke="#16a34a" stroke-width="2.5"/>
+<text x="250" y="186" text-anchor="middle" font-size="14" fill="#166534" font-family="'Amiri',serif" font-weight="bold">= 4.7524 × 10⁻⁴ = 0.00047524</text>
+<text x="250" y="215" text-anchor="middle" font-size="9.5" fill="#9f1239">قوة الأسس: (10ᵐ) = 10ᐧ</text>
+</svg>`
+};
+
+// ==================== EXAM DATA ====================
+const originalExamData = {
+sections: [
+{ id:'s1', title:{ar:'🔹 القسم 1: من الصيغة القياسية إلى الترميز العلمي (Q1-Q5)',en:'🔹 Section 1: Standard → Scientific (Q1-Q5)'}, questions:[
+{ q:{ar:'<strong>السؤال 1 (تمرين 1):</strong> عبّر عن العدد بالترميز العلمي: <span class="math-display">185,000,000</span>',en:'<strong>Q1 (Ex.1):</strong> Write in scientific notation: <span class="math-display">185,000,000</span>'},
+  svg: svgGraphs.fig_to_sci_big,
+  options:[{ar:'<span class="math-display">1.85 × 10⁸</span>',en:'<span class="math-display">1.85 × 10⁸</span>'},{ar:'<span class="math-display">18.5 × 10⁷</span>',en:'<span class="math-display">18.5 × 10⁷</span>'},{ar:'<span class="math-display">1.85 × 10⁷</span>',en:'<span class="math-display">1.85 × 10⁷</span>'},{ar:'<span class="math-display">0.185 × 10⁹</span>',en:'<span class="math-display">0.185 × 10⁹</span>'}],
+  correct:0, answer:{ar:'نحرك الفاصلة 8 خانات يساراً: 1.85 × 10⁸',en:'Move decimal 8 places left: 1.85 × 10⁸'} },
+{ q:{ar:'<strong>السؤال 2 (تمرين 2):</strong> عبّر عن العدد بالترميز العلمي: <span class="math-display">1,902,500,000</span>',en:'<strong>Q2 (Ex.2):</strong> Scientific notation: <span class="math-display">1,902,500,000</span>'},
+  options:[{ar:'<span class="math-display">1.9025 × 10⁸</span>',en:'<span class="math-display">1.9025 × 10⁸</span>'},{ar:'<span class="math-display">1.9025 × 10⁹</span>',en:'<span class="math-display">1.9025 × 10⁹</span>'},{ar:'<span class="math-display">19.025 × 10⁸</span>',en:'<span class="math-display">19.025 × 10⁸</span>'},{ar:'<span class="math-display">1.9025 × 10¹⁰</span>',en:'<span class="math-display">1.9025 × 10¹⁰</span>'}],
+  correct:1, answer:{ar:'9 خانات لليسار ⇒ 1.9025 × 10⁹',en:'9 places ⇒ 1.9025 × 10⁹'} },
+{ q:{ar:'<strong>السؤال 3 (تمرين 3):</strong> عبّر عن العدد بالترميز العلمي: <span class="math-display">0.000564</span>',en:'<strong>Q3 (Ex.3):</strong> Scientific notation: <span class="math-display">0.000564</span>'},
+  svg: svgGraphs.fig_to_sci_small,
+  options:[{ar:'<span class="math-display">5.64 × 10⁻⁴</span>',en:'<span class="math-display">5.64 × 10⁻⁴</span>'},{ar:'<span class="math-display">5.64 × 10⁴</span>',en:'<span class="math-display">5.64 × 10⁴</span>'},{ar:'<span class="math-display">5.64 × 10⁻³</span>',en:'<span class="math-display">5.64 × 10⁻³</span>'},{ar:'<span class="math-display">0.564 × 10⁻³</span>',en:'<span class="math-display">0.564 × 10⁻³</span>'}],
+  correct:0, answer:{ar:'4 خانات يميناً ⇒ أس سالب: 5.64 × 10⁻⁴',en:'4 places right ⇒ 5.64 × 10⁻⁴'} },
+{ q:{ar:'<strong>السؤال 4 (تمرين 4):</strong> عبّر عن العدد بالترميز العلمي: <span class="math-display">0.00000804</span>',en:'<strong>Q4 (Ex.4):</strong> Scientific notation: <span class="math-display">0.00000804</span>'},
+  options:[{ar:'<span class="math-display">8.04 × 10⁶</span>',en:'<span class="math-display">8.04 × 10⁶</span>'},{ar:'<span class="math-display">8.04 × 10⁻⁵</span>',en:'<span class="math-display">8.04 × 10⁻⁵</span>'},{ar:'<span class="math-display">8.04 × 10⁻⁶</span>',en:'<span class="math-display">8.04 × 10⁻⁶</span>'},{ar:'<span class="math-display">80.4 × 10⁻⁷</span>',en:'<span class="math-display">80.4 × 10⁻⁷</span>'}],
+  correct:2, answer:{ar:'6 خانات يميناً ⇒ 8.04 × 10⁻⁶',en:'6 places ⇒ 8.04 × 10⁻⁶'} },
+{ q:{ar:'<strong>السؤال 5 (تمرين 22):</strong> عبّر عن العدد بالترميز العلمي: <span class="math-display">1,405,000,000,000</span>',en:'<strong>Q5 (Ex.22):</strong> Scientific notation: <span class="math-display">1,405,000,000,000</span>'},
+  options:[{ar:'<span class="math-display">1.405 × 10¹²</span>',en:'<span class="math-display">1.405 × 10¹²</span>'},{ar:'<span class="math-display">1.405 × 10¹¹</span>',en:'<span class="math-display">1.405 × 10¹¹</span>'},{ar:'<span class="math-display">14.05 × 10¹¹</span>',en:'<span class="math-display">14.05 × 10¹¹</span>'},{ar:'<span class="math-display">1.405 × 10¹³</span>',en:'<span class="math-display">1.405 × 10¹³</span>'}],
+  correct:0, answer:{ar:'12 خانة لليسار ⇒ 1.405 × 10¹²',en:'12 places ⇒ 1.405 × 10¹²'} }
+]},
+{ id:'s2', title:{ar:'🔹 القسم 2: من الترميز العلمي إلى الصيغة القياسية (Q6-Q10)',en:'🔹 Section 2: Scientific → Standard (Q6-Q10)'}, questions:[
+{ q:{ar:'<strong>السؤال 6 (تمرين 7):</strong> عبّر بالصيغة القياسية: <span class="math-display">1.98 × 10⁷</span>',en:'<strong>Q6 (Ex.7):</strong> Standard form: <span class="math-display">1.98 × 10⁷</span>'},
+  svg: svgGraphs.fig_to_std,
+  options:[{ar:'<span class="math-display">19,800,000</span>',en:'<span class="math-display">19,800,000</span>'},{ar:'<span class="math-display">1,980,000</span>',en:'<span class="math-display">1,980,000</span>'},{ar:'<span class="math-display">198,000,000</span>',en:'<span class="math-display">198,000,000</span>'},{ar:'<span class="math-display">19,800</span>',en:'<span class="math-display">19,800</span>'}],
+  correct:0, answer:{ar:'حرك الفاصلة 7 خانات يميناً: 19,800,000',en:'7 places right: 19,800,000'} },
+{ q:{ar:'<strong>السؤال 7 (تمرين 9):</strong> عبّر بالصيغة القياسية: <span class="math-display">3.405 × 10⁻⁸</span>',en:'<strong>Q7 (Ex.9):</strong> Standard form: <span class="math-display">3.405 × 10⁻⁸</span>'},
+  options:[{ar:'<span class="math-display">0.0000003405</span>',en:'<span class="math-display">0.0000003405</span>'},{ar:'<span class="math-display">0.00000003405</span>',en:'<span class="math-display">0.00000003405</span>'},{ar:'<span class="math-display">0.000000003405</span>',en:'<span class="math-display">0.000000003405</span>'},{ar:'<span class="math-display">34,050,000</span>',en:'<span class="math-display">34,050,000</span>'}],
+  correct:1, answer:{ar:'8 خانات يساراً: 0.00000003405',en:'8 places left: 0.00000003405'} },
+{ q:{ar:'<strong>السؤال 8 (تمرين 10):</strong> عبّر بالصيغة القياسية: <span class="math-display">6.8 × 10⁻⁵</span>',en:'<strong>Q8 (Ex.10):</strong> Standard form: <span class="math-display">6.8 × 10⁻⁵</span>'},
+  options:[{ar:'<span class="math-display">0.000068</span>',en:'<span class="math-display">0.000068</span>'},{ar:'<span class="math-display">0.00068</span>',en:'<span class="math-display">0.00068</span>'},{ar:'<span class="math-display">0.0000068</span>',en:'<span class="math-display">0.0000068</span>'},{ar:'<span class="math-display">680,000</span>',en:'<span class="math-display">680,000</span>'}],
+  correct:0, answer:{ar:'5 خانات يساراً: 0.000068',en:'5 places left: 0.000068'} },
+{ q:{ar:'<strong>السؤال 9 (تمرين 30):</strong> عبّر بالصيغة القياسية: <span class="math-display">8.1 × 10⁻³</span>',en:'<strong>Q9 (Ex.30):</strong> Standard form: <span class="math-display">8.1 × 10⁻³</span>'},
+  options:[{ar:'<span class="math-display">0.081</span>',en:'<span class="math-display">0.081</span>'},{ar:'<span class="math-display">0.00081</span>',en:'<span class="math-display">0.00081</span>'},{ar:'<span class="math-display">0.0081</span>',en:'<span class="math-display">0.0081</span>'},{ar:'<span class="math-display">8100</span>',en:'<span class="math-display">8100</span>'}],
+  correct:2, answer:{ar:'3 خانات يساراً: 0.0081',en:'3 places left: 0.0081'} },
+{ q:{ar:'<strong>السؤال 10 (تمرين 32):</strong> عبّر بالصيغة القياسية: <span class="math-display">8.73 × 10¹¹</span>',en:'<strong>Q10 (Ex.32):</strong> Standard form: <span class="math-display">8.73 × 10¹¹</span>'},
+  options:[{ar:'<span class="math-display">873,000,000,000</span>',en:'<span class="math-display">873,000,000,000</span>'},{ar:'<span class="math-display">87,300,000,000</span>',en:'<span class="math-display">87,300,000,000</span>'},{ar:'<span class="math-display">8,730,000,000,000</span>',en:'<span class="math-display">8,730,000,000,000</span>'},{ar:'<span class="math-display">873,000,000</span>',en:'<span class="math-display">873,000,000</span>'}],
+  correct:0, answer:{ar:'11 خانة يميناً: 873,000,000,000',en:'11 places right: 873,000,000,000'} }
+]},
+{ id:'s3', title:{ar:'🔹 القسم 3: الضرب بالترميز العلمي (Q11-Q15)',en:'🔹 Section 3: Multiplication (Q11-Q15)'}, questions:[
+{ q:{ar:'<strong>السؤال 11 (تمرين 11):</strong> جد قيمة الضرب بالترميز العلمي: <span class="math-display">(1.2 × 10³)(1.45 × 10¹²)</span>',en:'<strong>Q11 (Ex.11):</strong> Multiply: <span class="math-display">(1.2 × 10³)(1.45 × 10¹²)</span>'},
+  svg: svgGraphs.fig_mult,
+  options:[{ar:'<span class="math-display">1.74 × 10³⁶</span>',en:'<span class="math-display">1.74 × 10³⁶</span>'},{ar:'<span class="math-display">1.74 × 10¹⁵</span>',en:'<span class="math-display">1.74 × 10¹⁵</span>'},{ar:'<span class="math-display">2.65 × 10¹⁵</span>',en:'<span class="math-display">2.65 × 10¹⁵</span>'},{ar:'<span class="math-display">1.74 × 10¹²</span>',en:'<span class="math-display">1.74 × 10¹²</span>'}],
+  correct:1, answer:{ar:'1.2×1.45 = 1.74 و 10³⁺¹² = 10¹⁵ ⇒ 1.74 × 10¹⁵',en:'1.74 × 10¹⁵'} },
+{ q:{ar:'<strong>السؤال 12 (تمرين 12):</strong> جد قيمة الضرب بالترميز العلمي: <span class="math-display">(7.08 × 10¹⁴)(5 × 10⁻⁹)</span>',en:'<strong>Q12 (Ex.12):</strong> Multiply: <span class="math-display">(7.08 × 10¹⁴)(5 × 10⁻⁹)</span>'},
+  svg: svgGraphs.fig_adjust,
+  options:[{ar:'<span class="math-display">3.54 × 10⁶</span>',en:'<span class="math-display">3.54 × 10⁶</span>'},{ar:'<span class="math-display">3.54 × 10⁵</span>',en:'<span class="math-display">3.54 × 10⁵</span>'},{ar:'<span class="math-display">1.208 × 10⁶</span>',en:'<span class="math-display">1.208 × 10⁶</span>'},{ar:'<span class="math-display">35.4 × 10⁶</span>',en:'<span class="math-display">35.4 × 10⁶</span>'}],
+  correct:0, answer:{ar:'7.08×5 = 35.4 و 10¹⁴⁻⁹ = 10⁵ ⇒ 35.4×10⁵ = 3.54×10⁶ بعد التعديل',en:'35.4×10⁵ = 3.54×10⁶ after adjusting'} },
+{ q:{ar:'<strong>السؤال 13:</strong> جد قيمة الضرب: <span class="math-display">(2 × 10⁴)(3 × 10⁵)</span>',en:'<strong>Q13:</strong> Multiply: <span class="math-display">(2 × 10⁴)(3 × 10⁵)</span>'},
+  options:[{ar:'<span class="math-display">6 × 10²⁰</span>',en:'<span class="math-display">6 × 10²⁰</span>'},{ar:'<span class="math-display">5 × 10⁹</span>',en:'<span class="math-display">5 × 10⁹</span>'},{ar:'<span class="math-display">6 × 10⁹</span>',en:'<span class="math-display">6 × 10⁹</span>'},{ar:'<span class="math-display">6 × 10⁸</span>',en:'<span class="math-display">6 × 10⁸</span>'}],
+  correct:2, answer:{ar:'2×3 = 6 و 10⁴⁺⁵ = 10⁹ ⇒ 6 × 10⁹',en:'6 × 10⁹'} },
+{ q:{ar:'<strong>السؤال 14:</strong> جد قيمة الضرب: <span class="math-display">(4.5 × 10⁻³)(2 × 10⁶)</span>',en:'<strong>Q14:</strong> Multiply: <span class="math-display">(4.5 × 10⁻³)(2 × 10⁶)</span>'},
+  options:[{ar:'<span class="math-display">9 × 10⁻³</span>',en:'<span class="math-display">9 × 10⁻³</span>'},{ar:'<span class="math-display">2.25 × 10³</span>',en:'<span class="math-display">2.25 × 10³</span>'},{ar:'<span class="math-display">9 × 10¹⁸</span>',en:'<span class="math-display">9 × 10¹⁸</span>'},{ar:'<span class="math-display">9 × 10³</span>',en:'<span class="math-display">9 × 10³</span>'}],
+  correct:3, answer:{ar:'4.5×2 = 9 و 10⁻³⁺⁶ = 10³ ⇒ 9 × 10³',en:'9 × 10³'} },
+{ q:{ar:'<strong>السؤال 15:</strong> جد قيمة الضرب: <span class="math-display">(1.5 × 10⁻⁴)(4 × 10⁻²)</span>',en:'<strong>Q15:</strong> Multiply: <span class="math-display">(1.5 × 10⁻⁴)(4 × 10⁻²)</span>'},
+  options:[{ar:'<span class="math-display">6 × 10⁻⁶</span>',en:'<span class="math-display">6 × 10⁻⁶</span>'},{ar:'<span class="math-display">6 × 10⁻⁸</span>',en:'<span class="math-display">6 × 10⁻⁸</span>'},{ar:'<span class="math-display">5.5 × 10⁻⁶</span>',en:'<span class="math-display">5.5 × 10⁻⁶</span>'},{ar:'<span class="math-display">6 × 10⁶</span>',en:'<span class="math-display">6 × 10⁶</span>'}],
+  correct:0, answer:{ar:'1.5×4 = 6 و 10⁻⁴⁻² = 10⁻⁶ ⇒ 6 × 10⁻⁶',en:'6 × 10⁻⁶'} }
+]},
+{ id:'s4', title:{ar:'🔹 القسم 4: القوى والتربيع (Q16-Q20)',en:'🔹 Section 4: Powers & Squaring (Q16-Q20)'}, questions:[
+{ q:{ar:'<strong>السؤال 16 (تمرين 14):</strong> جد قيمة: <span class="math-display">(2.18 × 10⁻²)²</span> بالترميز العلمي',en:'<strong>Q16 (Ex.14):</strong> Evaluate: <span class="math-display">(2.18 × 10⁻²)²</span>'},
+  svg: svgGraphs.fig_power,
+  options:[{ar:'<span class="math-display">4.7524 × 10⁻²</span>',en:'<span class="math-display">4.7524 × 10⁻²</span>'},{ar:'<span class="math-display">4.7524 × 10⁻⁴</span>',en:'<span class="math-display">4.7524 × 10⁻⁴</span>'},{ar:'<span class="math-display">2.18 × 10⁻⁴</span>',en:'<span class="math-display">2.18 × 10⁻⁴</span>'},{ar:'<span class="math-display">4.7524 × 10⁴</span>',en:'<span class="math-display">4.7524 × 10⁴</span>'}],
+  correct:1, answer:{ar:'(2.18)² = 4.7524 و (10⁻²)² = 10⁻⁴ ⇒ 4.7524 × 10⁻⁴',en:'4.7524 × 10⁻⁴'} },
+{ q:{ar:'<strong>السؤال 17:</strong> جد قيمة: <span class="math-display">(3 × 10⁵)²</span>',en:'<strong>Q17:</strong> Evaluate: <span class="math-display">(3 × 10⁵)²</span>'},
+  options:[{ar:'<span class="math-display">6 × 10¹⁰</span>',en:'<span class="math-display">6 × 10¹⁰</span>'},{ar:'<span class="math-display">9 × 10¹⁰</span>',en:'<span class="math-display">9 × 10¹⁰</span>'},{ar:'<span class="math-display">9 × 10⁵</span>',en:'<span class="math-display">9 × 10⁵</span>'},{ar:'<span class="math-display">3 × 10¹⁰</span>',en:'<span class="math-display">3 × 10¹⁰</span>'}],
+  correct:1, answer:{ar:'3² = 9 و (10⁵)² = 10¹⁰ ⇒ 9 × 10¹⁰',en:'9 × 10¹⁰'} },
+{ q:{ar:'<strong>السؤال 18:</strong> جد قيمة: <span class="math-display">(2 × 10⁻³)³</span>',en:'<strong>Q18:</strong> Evaluate: <span class="math-display">(2 × 10⁻³)³</span>'},
+  options:[{ar:'<span class="math-display">6 × 10⁻⁹</span>',en:'<span class="math-display">6 × 10⁻⁹</span>'},{ar:'<span class="math-display">8 × 10⁻⁶</span>',en:'<span class="math-display">8 × 10⁻⁶</span>'},{ar:'<span class="math-display">8 × 10⁻⁹</span>',en:'<span class="math-display">8 × 10⁻⁹</span>'},{ar:'<span class="math-display">2 × 10⁻⁹</span>',en:'<span class="math-display">2 × 10⁻⁹</span>'}],
+  correct:2, answer:{ar:'2³ = 8 و (10⁻³)³ = 10⁻⁹ ⇒ 8 × 10⁻⁹',en:'8 × 10⁻⁹'} },
+{ q:{ar:'<strong>السؤال 19:</strong> جد قيمة: <span class="math-display">(5 × 10⁴)²</span> بالترميز العلمي',en:'<strong>Q19:</strong> Evaluate in scientific notation: <span class="math-display">(5 × 10⁴)²</span>'},
+  options:[{ar:'<span class="math-display">2.5 × 10⁹</span>',en:'<span class="math-display">2.5 × 10⁹</span>'},{ar:'<span class="math-display">2.5 × 10⁸</span>',en:'<span class="math-display">2.5 × 10⁸</span>'},{ar:'<span class="math-display">10 × 10⁹</span>',en:'<span class="math-display">10 × 10⁹</span>'},{ar:'<span class="math-display">5 × 10⁸</span>',en:'<span class="math-display">5 × 10⁸</span>'}],
+  correct:0, answer:{ar:'25 × 10⁸ = 2.5 × 10⁹ بعد التعديل',en:'25×10⁸ = 2.5×10⁹'} },
+{ q:{ar:'<strong>السؤال 20:</strong> جد قيمة: <span class="math-display">(1.2 × 10⁻⁵)²</span>',en:'<strong>Q20:</strong> Evaluate: <span class="math-display">(1.2 × 10⁻⁵)²</span>'},
+  options:[{ar:'<span class="math-display">2.4 × 10⁻¹⁰</span>',en:'<span class="math-display">2.4 × 10⁻¹⁰</span>'},{ar:'<span class="math-display">1.44 × 10⁻¹⁰</span>',en:'<span class="math-display">1.44 × 10⁻¹⁰</span>'},{ar:'<span class="math-display">1.44 × 10⁻⁵</span>',en:'<span class="math-display">1.44 × 10⁻⁵</span>'},{ar:'<span class="math-display">1.2 × 10⁻¹⁰</span>',en:'<span class="math-display">1.2 × 10⁻¹⁰</span>'}],
+  correct:1, answer:{ar:'1.44 × 10⁻¹⁰',en:'1.44 × 10⁻¹⁰'} }
+]},
+{ id:'s5', title:{ar:'🔹 القسم 5: القسمة بالترميز العلمي (Q21-Q25)',en:'🔹 Section 5: Division (Q21-Q25)'}, questions:[
+{ q:{ar:'<strong>السؤال 21 (تمرين 15):</strong> جد قيمة القسمة: <span class="math-display">(1.035 × 10⁸) ÷ (2.3 × 10⁴)</span>',en:'<strong>Q21 (Ex.15):</strong> Divide: <span class="math-display">(1.035 × 10⁸) ÷ (2.3 × 10⁴)</span>'},
+  svg: svgGraphs.fig_div,
+  options:[{ar:'<span class="math-display">4.5 × 10⁴</span>',en:'<span class="math-display">4.5 × 10⁴</span>'},{ar:'<span class="math-display">4.5 × 10³</span>',en:'<span class="math-display">4.5 × 10³</span>'},{ar:'<span class="math-display">4.5 × 10²</span>',en:'<span class="math-display">4.5 × 10²</span>'},{ar:'<span class="math-display">0.45 × 10³</span>',en:'<span class="math-display">0.45 × 10³</span>'}],
+  correct:1, answer:{ar:'1.035/2.3 = 0.45 و 10⁸⁻⁴ = 10⁴ ⇒ 0.45×10⁴ = 4.5×10³ = 4500',en:'0.45×10⁴ = 4.5×10³ = 4500'} },
+{ q:{ar:'<strong>السؤال 22 (تمرين 16):</strong> جد قيمة القسمة: <span class="math-display">(2.542 × 10⁵) ÷ (4.1 × 10⁻¹⁰)</span>',en:'<strong>Q22 (Ex.16):</strong> Divide: <span class="math-display">(2.542 × 10⁵) ÷ (4.1 × 10⁻¹⁰)</span>'},
+  options:[{ar:'<span class="math-display">6.2 × 10¹⁴</span>',en:'<span class="math-display">6.2 × 10¹⁴</span>'},{ar:'<span class="math-display">6.2 × 10¹⁵</span>',en:'<span class="math-display">6.2 × 10¹⁵</span>'},{ar:'<span class="math-display">6.2 × 10⁻¹⁵</span>',en:'<span class="math-display">6.2 × 10⁻¹⁵</span>'},{ar:'<span class="math-display">0.62 × 10¹⁴</span>',en:'<span class="math-display">0.62 × 10¹⁴</span>'}],
+  correct:0, answer:{ar:'2.542/4.1 = 0.62 و 10⁵⁻⁽⁻¹⁰⁾ = 10¹⁵ ⇒ 0.62×10¹⁵ = 6.2×10¹⁴',en:'0.62×10¹⁵ = 6.2×10¹⁴'} },
+{ q:{ar:'<strong>السؤال 23 (تمرين 17):</strong> جد قيمة القسمة: <span class="math-display">(1.445 × 10⁻⁷) ÷ (1.7 × 10⁵)</span>',en:'<strong>Q23 (Ex.17):</strong> Divide: <span class="math-display">(1.445 × 10⁻⁷) ÷ (1.7 × 10⁵)</span>'},
+  options:[{ar:'<span class="math-display">8.5 × 10⁻²</span>',en:'<span class="math-display">8.5 × 10⁻²</span>'},{ar:'<span class="math-display">8.5 × 10⁻¹²</span>',en:'<span class="math-display">8.5 × 10⁻¹²</span>'},{ar:'<span class="math-display">8.5 × 10⁻¹³</span>',en:'<span class="math-display">8.5 × 10⁻¹³</span>'},{ar:'<span class="math-display">8.5 × 10²</span>',en:'<span class="math-display">8.5 × 10²</span>'}],
+  correct:2, answer:{ar:'1.445/1.7 = 0.85 و 10⁻⁷⁻⁵ = 10⁻¹² ⇒ 0.85×10⁻¹² = 8.5×10⁻¹³',en:'0.85×10⁻¹² = 8.5×10⁻¹³'} },
+{ q:{ar:'<strong>السؤال 24 (تمرين 18):</strong> جد قيمة القسمة: <span class="math-display">(2.05 × 10⁻⁸) ÷ (4 × 10⁻²)</span>',en:'<strong>Q24 (Ex.18):</strong> Divide: <span class="math-display">(2.05 × 10⁻⁸) ÷ (4 × 10⁻²)</span>'},
+  options:[{ar:'<span class="math-display">5.125 × 10⁻⁶</span>',en:'<span class="math-display">5.125 × 10⁻⁶</span>'},{ar:'<span class="math-display">5.125 × 10⁻⁷</span>',en:'<span class="math-display">5.125 × 10⁻⁷</span>'},{ar:'<span class="math-display">0.5125 × 10⁻⁷</span>',en:'<span class="math-display">0.5125 × 10⁻⁷</span>'},{ar:'<span class="math-display">5.125 × 10⁻¹⁰</span>',en:'<span class="math-display">5.125 × 10⁻¹⁰</span>'}],
+  correct:1, answer:{ar:'2.05/4 = 0.5125 و 10⁻⁸⁻⁽⁻²⁾ = 10⁻⁶ ⇒ 0.5125×10⁻⁶ = 5.125×10⁻⁷',en:'0.5125×10⁻⁶ = 5.125×10⁻⁷'} },
+{ q:{ar:'<strong>السؤال 25:</strong> جد قيمة القسمة: <span class="math-display">(9 × 10⁸) ÷ (3 × 10²)</span>',en:'<strong>Q25:</strong> Divide: <span class="math-display">(9 × 10⁸) ÷ (3 × 10²)</span>'},
+  options:[{ar:'<span class="math-display">3 × 10⁴</span>',en:'<span class="math-display">3 × 10⁴</span>'},{ar:'<span class="math-display">6 × 10⁶</span>',en:'<span class="math-display">6 × 10⁶</span>'},{ar:'<span class="math-display">3 × 10⁶</span>',en:'<span class="math-display">3 × 10⁶</span>'},{ar:'<span class="math-display">3 × 10¹⁰</span>',en:'<span class="math-display">3 × 10¹⁰</span>'}],
+  correct:2, answer:{ar:'9/3 = 3 و 10⁸⁻² = 10⁶ ⇒ 3 × 10⁶',en:'3 × 10⁶'} }
+]},
+{ id:'s6', title:{ar:'🔹 القسم 6: المفاهيم والتطبيقات (Q26-Q30)',en:'🔹 Section 6: Concepts & Applications (Q26-Q30)'}, questions:[
+{ q:{ar:'<strong>السؤال 26:</strong> أي مما يلي مكتوب بالصيغة العلمية الصحيحة؟',en:'<strong>Q26:</strong> Which is written in correct scientific notation?'},
+  svg: svgGraphs.fig_definition,
+  options:[{ar:'<span class="math-display">1.85 × 10⁸</span>',en:'<span class="math-display">1.85 × 10⁸</span>'},{ar:'<span class="math-display">18.5 × 10⁷</span>',en:'<span class="math-display">18.5 × 10⁷</span>'},{ar:'<span class="math-display">0.185 × 10⁹</span>',en:'<span class="math-display">0.185 × 10⁹</span>'},{ar:'<span class="math-display">185 × 10⁶</span>',en:'<span class="math-display">185 × 10⁶</span>'}],
+  correct:0, answer:{ar:'فقط 1.85 يحقق الشرط 1 ≤ a < 10',en:'Only 1.85 satisfies 1 ≤ a < 10'} },
+{ q:{ar:'<strong>السؤال 27:</strong> في الصيغة <span class="math-display">a × 10ⁿ</span> ما شرط المعامل a؟',en:'<strong>Q27:</strong> In <span class="math-display">a × 10ⁿ</span>, what is the condition on a?'},
+  options:[{ar:'<span class="math-display">1 ≤ a &lt; 10</span>',en:'<span class="math-display">1 ≤ a &lt; 10</span>'},{ar:'<span class="math-display">0 ≤ a &lt; 1</span>',en:'<span class="math-display">0 ≤ a &lt; 1</span>'},{ar:'<span class="math-display">1 &lt; a ≤ 10</span>',en:'<span class="math-display">1 &lt; a ≤ 10</span>'},{ar:'<span class="math-display">a ≥ 10</span>',en:'<span class="math-display">a ≥ 10</span>'}],
+  correct:0, answer:{ar:'التعريف: 1 ≤ a < 10 و n عدد صحيح',en:'Definition: 1 ≤ a < 10, n integer'} },
+{ q:{ar:'<strong>السؤال 28:</strong> ما قيمة الأس n عند كتابة <span class="math-display">0.000564</span> بالترميز العلمي؟',en:'<strong>Q28:</strong> What is n when writing <span class="math-display">0.000564</span> in scientific notation?'},
+  options:[{ar:'<span class="math-display">4</span>',en:'<span class="math-display">4</span>'},{ar:'<span class="math-display">-4</span>',en:'<span class="math-display">-4</span>'},{ar:'<span class="math-display">-3</span>',en:'<span class="math-display">-3</span>'},{ar:'<span class="math-display">3</span>',en:'<span class="math-display">3</span>'}],
+  correct:1, answer:{ar:'العدد أقل من 1 ⇒ أس سالب: 5.64 × 10⁻⁴ ⇒ n = -4',en:'n = -4'} },
+{ q:{ar:'<strong>السؤال 29:</strong> بُعد الأرض عن الشمس حوالي 150,000,000 km. بالترميز العلمي:',en:'<strong>Q29:</strong> Earth-Sun distance ≈ 150,000,000 km. In scientific notation:'},
+  options:[{ar:'<span class="math-display">1.5 × 10⁸ km</span>',en:'<span class="math-display">1.5 × 10⁸ km</span>'},{ar:'<span class="math-display">1.5 × 10⁷ km</span>',en:'<span class="math-display">1.5 × 10⁷ km</span>'},{ar:'<span class="math-display">15 × 10⁸ km</span>',en:'<span class="math-display">15 × 10⁸ km</span>'},{ar:'<span class="math-display">0.15 × 10⁸ km</span>',en:'<span class="math-display">0.15 × 10⁸ km</span>'}],
+  correct:0, answer:{ar:'8 خانات لليسار ⇒ 1.5 × 10⁸ km',en:'1.5 × 10⁸ km'} },
+{ q:{ar:'<strong>السؤال 30:</strong> قطر بكتيريا حوالي 0.000002 m. بالترميز العلمي:',en:'<strong>Q30:</strong> A bacterium diameter ≈ 0.000002 m. In scientific notation:'},
+  options:[{ar:'<span class="math-display">2 × 10⁶ m</span>',en:'<span class="math-display">2 × 10⁶ m</span>'},{ar:'<span class="math-display">2 × 10⁻⁶ m</span>',en:'<span class="math-display">2 × 10⁻⁶ m</span>'},{ar:'<span class="math-display">2 × 10⁻⁵ m</span>',en:'<span class="math-display">2 × 10⁻⁵ m</span>'},{ar:'<span class="math-display">2 × 10⁷ m</span>',en:'<span class="math-display">2 × 10⁷ m</span>'}],
+  correct:1, answer:{ar:'6 خانات يميناً ⇒ 2 × 10⁻⁶ m',en:'2 × 10⁻⁶ m'} }
+]}
+]};
+
+function shuffleArray(a){const r=[...a];for(let i=r.length-1;i>0;i--){const j=Math.floor(rng()*(i+1));[r[i],r[j]]=[r[j],r[i]]}return r}
+function prepareShuffledExam(){rng=mulberry32(currentSeed);examData=JSON.parse(JSON.stringify(originalExamData));correctAnswersMap={};let g=0;examData.sections.forEach(s=>{s.questions=shuffleArray(s.questions);s.questions.forEach(q=>{const oc=q.options.map((o,i)=>({option:o,isCorrect:i===q.correct}));const sh=shuffleArray(oc);q.options=sh.map(o=>o.option);q.correct=sh.findIndex(o=>o.isCorrect);correctAnswersMap[g]=String.fromCharCode(97+q.correct);g++})})}
+function reshuffleExam(){if(confirm(currentLang==='ar'?'🔄 سيتم إنشاء أسئلة جديدة ومسح إجاباتك. هل أنت متأكد؟':'🔄 New questions will be generated. Are you sure?')){currentSeed=Date.now();timeRemaining=TOTAL_TIME;answersVisible=false;prepareShuffledExam();renderExam();saveState();alert(currentLang==='ar'?'🎲 تم تغيير الأسئلة! حظاً موفقاً! 🍀':' Questions changed! Good luck! 🍀');window.scrollTo({top:0,behavior:'smooth'})}}
+function setLanguage(lang){currentLang=lang;document.documentElement.lang=lang;document.documentElement.dir=lang==='ar'?'rtl':'ltr';document.getElementById('btn-ar').classList.toggle('active',lang==='ar');document.getElementById('btn-en').classList.toggle('active',lang==='en');document.body.classList.toggle('en-mode',lang==='en');document.querySelectorAll('[data-ar]').forEach(el=>{el.textContent=el.getAttribute('data-'+lang)});document.querySelectorAll('[data-placeholder-ar]').forEach(el=>{el.placeholder=el.getAttribute('data-placeholder-'+lang)});renderExam();saveState(false)}
+function renderExam(){const container=document.getElementById('exam-content');const lbl={option:['a)','b)','c)','d)'],answer:currentLang==='ar'?'✅ الإجابة:':'✅ Answer:'};let html='',g=0;
+examData.sections.forEach((section,si)=>{const bc=['module-1','module-2','module-3','module-4','module-5','module-6'][si];html+='<section class="bg-white p-6 rounded-2xl shadow-lg border-2 border-orange-100"><div class="text-center mb-4"><span class="module-badge '+bc+'">'+section.title[currentLang]+'</span></div><ol class="space-y-4 text-sm">';
+section.questions.forEach(q=>{html+='<li class="border-r-4 border-orange-400 pr-4 py-2" id="q-'+g+'" style="border-right:4px solid #ea580c;padding-right:1rem;"><strong class="text-orange-700">'+(g+1)+'.</strong> '+q.q[currentLang]+'<br>';
+if(q.svg)html+='<div class="graph-container">'+q.svg+'</div>';
+q.options.forEach((opt,oi)=>{html+='<label class="cursor-pointer block mt-2 mr-4 hover:bg-orange-50 rounded-lg p-2 transition" style="margin-right:1rem;"><input type="radio" name="q'+g+'" value="'+String.fromCharCode(97+oi)+'" class="mr-2 ml-2"><span class="arabic-math">'+lbl.option[oi]+' '+opt[currentLang]+'</span></label>'});
+html+='<div class="answer-box text-green-700 mt-3 font-medium '+(answersVisible?'':'hidden')+' bg-green-50 rounded-lg p-3 border border-green-200">'+lbl.answer+' '+lbl.option[q.correct]+' <span class="arabic-math">'+q.options[q.correct][currentLang]+'</span><br><span class="text-sm text-green-700 mt-2 block arabic-math">'+q.answer[currentLang]+'</span></div></li>';g++});
+html+='</ol></section>'});
+container.innerHTML=html}
+function startTimer(){updateTimerDisplay();timerInterval=setInterval(()=>{timeRemaining--;updateTimerDisplay();if(timeRemaining%60===0)saveState(false);if(timeRemaining<=600)document.getElementById('timer').classList.add('timer-warning');if(timeRemaining<=0){clearInterval(timerInterval);alert(currentLang==='ar'?'⏰ انتهى الوقت!':"⏰ Time's up!");gradeExam()}},1000)}
+function updateTimerDisplay(){const m=Math.floor(timeRemaining/60),s=timeRemaining%60;document.getElementById('timer').textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0')}
+function toggleAnswers(){answersVisible=!answersVisible;document.querySelectorAll('.answer-box').forEach(el=>el.classList.toggle('hidden',!answersVisible));saveState(false)}
+function gradeExam(){let cc=0;const ss=new Array(TOTAL_SECTIONS).fill(0);
+for(let i=0;i<TOTAL_QUESTIONS;i++){const sel=document.querySelector('input[name="q'+i+'"]:checked');const li=document.getElementById('q-'+i);if(li){const ok=sel&&sel.value===correctAnswersMap[i];if(ok){cc++;li.classList.add('correct');li.classList.remove('incorrect');ss[Math.floor(i/QUESTIONS_PER_SECTION)]++}else{li.classList.add('incorrect');li.classList.remove('correct')}}}
+const score=Math.round(cc/TOTAL_QUESTIONS*100);document.getElementById('res-total').textContent=score+' / 100';document.getElementById('res-name').textContent=document.getElementById('studentName').value||(currentLang==='ar'?'بطل':'Champion');document.getElementById('res-date').textContent=new Date().toLocaleDateString(currentLang==='ar'?'ar-AE':'en-US');
+const pc=document.getElementById('sections-performance');pc.innerHTML='';examData.sections.forEach((s,i)=>{pc.innerHTML+='<div class="flex justify-between items-center p-3 bg-white rounded-lg"><span class="text-gray-700">'+s.title[currentLang]+'</span><span class="font-bold text-orange-700">'+ss[i]+'/'+QUESTIONS_PER_SECTION+'</span></div>'});
+const badge=document.getElementById('success-badge');document.getElementById('success-percent').textContent=score+'%';
+if(currentLang==='ar'){if(score>=90){badge.textContent='🌟 ممتاز جداً!';badge.className='success-badge grade-excellent'}else if(score>=75){badge.textContent='👏 ممتاز!';badge.className='success-badge grade-good'}else if(score>=50){badge.textContent='👍 جيد';badge.className='success-badge grade-pass'}else{badge.textContent='💪 حاول مرة أخرى';badge.className='success-badge grade-fail'}}
+else{if(score>=90){badge.textContent='🌟 Outstanding!';badge.className='success-badge grade-excellent'}else if(score>=75){badge.textContent='👏 Excellent!';badge.className='success-badge grade-good'}else if(score>=50){badge.textContent='👍 Good';badge.className='success-badge grade-pass'}else{badge.textContent='💪 Try Again';badge.className='success-badge grade-fail'}}
+document.getElementById('results-panel').classList.remove('hidden');document.getElementById('results-panel').scrollIntoView({behavior:'smooth'});if(timerInterval)clearInterval(timerInterval)}
+function sendResultsToEmail(){const btn=document.getElementById('sendEmailBtn'),status=document.getElementById('emailStatus');btn.disabled=true;btn.textContent=currentLang==='ar'?'⏳ جاري الإرسال...':'⏳ Sending...';
+const name=document.getElementById('studentName').value||'N/A',klass=document.getElementById('studentClass').value||'N/A',date=document.getElementById('examDate').value||new Date().toLocaleDateString(),score=document.getElementById('res-total').textContent,rate=document.getElementById('success-percent').textContent,badge=document.getElementById('success-badge').textContent;
+let qh='<div style="font-family:Arial;direction:rtl"><h2>🔬 '+(currentLang==='ar'?'نتيجة امتحان الترميز العلمي - رياضيات 10 عام':'Scientific Notation Exam Result - Grade 10')+'</h2><p><b>الاسم:</b> '+name+'</p><p><b>الشعبة:</b> '+klass+'</p><p><b>التاريخ:</b> '+date+'</p><p><b>الدرجة:</b> '+score+' ('+rate+')</p><p><b>التقدير:</b> '+badge+'</p><hr><table style="width:100%;border-collapse:collapse"><tr style="background:#ea580c;color:white"><th style="padding:8px;border:1px solid #ddd">#</th><th style="padding:8px;border:1px solid #ddd">السؤال</th><th style="padding:8px;border:1px solid #ddd">إجابة الطالب</th><th style="padding:8px;border:1px solid #ddd">الصحيحة</th><th style="padding:8px;border:1px solid #ddd">النتيجة</th></tr>';
+let g=0;examData.sections.forEach(sec=>{qh+='<tr style="background:#ffedd5"><td colspan="5" style="padding:8px;font-weight:bold;border:1px solid #ddd">'+sec.title.ar+'</td></tr>';sec.questions.forEach(q=>{const sel=document.querySelector('input[name="q'+g+'"]:checked');const sv=sel?sel.value:null;const cv=correctAnswersMap[g];const ic=sv===cv;let sat=sv?q.options[sv.charCodeAt(0)-97][currentLang]:(currentLang==='ar'?'❌ لم يجب':'❌ No answer');const sac=ic?'#16a34a':'#dc2626';const cat=q.options[q.correct][currentLang];const rb=ic?'#f0fdf4':'#fef2f2';qh+='<tr style="background:'+rb+'"><td style="padding:8px;border:1px solid #ddd;text-align:center">'+(g+1)+'</td><td style="padding:8px;border:1px solid #ddd">'+q.q.ar.replace(/<[^>]+>/g,'').substring(0,70)+'...</td><td style="padding:8px;border:1px solid #ddd;color:'+sac+'">'+sat+'</td><td style="padding:8px;border:1px solid #ddd;color:#16a34a">'+cat+'</td><td style="padding:8px;border:1px solid #ddd;text-align:center">'+(ic?'✅':'❌')+'</td></tr>';g++})});
+qh+='</table></div>';
+emailjs.send(SERVICE_ID,TEMPLATE_ID,{to_email:TARGET_EMAIL,student_name:name,student_class:klass,exam_date:date,total_score:score,success_rate:rate,grade:badge,answers_table:qh})
+.then(()=>{status.textContent=currentLang==='ar'?'✅ تم الإرسال بنجاح!':'✅ Sent successfully!';status.style.color='#16a34a';btn.textContent=currentLang==='ar'?'✓ تم':'✓ Sent';alert(currentLang==='ar'?'تم إرسال النتيجة للمعلم بنجاح!' : 'Result sent to teacher successfully!')})
+.catch(err=>{status.textContent=currentLang==='ar'?'❌ فشل الإرسال':'❌ Failed';status.style.color='#dc2626';btn.disabled=false;btn.textContent=currentLang==='ar'?'📧 حاول مرة أخرى':'📧 Try Again'});}
+
+window.addEventListener('DOMContentLoaded',()=>{
+  const saved=loadState();
+  if(saved&&saved.seed){currentSeed=saved.seed;currentLang=saved.lang||'ar';timeRemaining=saved.timeRemaining!==undefined?saved.timeRemaining:TOTAL_TIME;answersVisible=saved.answersVisible||false}else{currentSeed=Date.now()}
+  document.getElementById('btn-ar').classList.toggle('active',currentLang==='ar');
+  document.getElementById('btn-en').classList.toggle('active',currentLang==='en');
+  document.body.classList.toggle('en-mode',currentLang==='en');
+  document.documentElement.lang=currentLang;document.documentElement.dir=currentLang==='ar'?'rtl':'ltr';
+  document.querySelectorAll('[data-ar]').forEach(el=>{el.textContent=el.getAttribute('data-'+currentLang)});
+  document.querySelectorAll('[data-placeholder-ar]').forEach(el=>{el.placeholder=el.getAttribute('data-placeholder-'+currentLang)});
+  prepareShuffledExam();renderExam();
+  if(saved){if(saved.studentName)document.getElementById('studentName').value=saved.studentName;if(saved.studentClass)document.getElementById('studentClass').value=saved.studentClass;if(saved.examDate)document.getElementById('examDate').value=saved.examDate;if(saved.answers)restoreAnswers(saved.answers)}
+  setupAnswerListeners();setupInputListeners();
+  document.getElementById('method-holder').innerHTML=svgGraphs.fig_definition;
+  startTimer();
+});
+window.addEventListener('beforeunload',()=>saveState(false));
+</script>
+</body>
+</html>
